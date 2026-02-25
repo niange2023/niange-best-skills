@@ -1,41 +1,18 @@
-# Hayden Best Skills - 创建指南
+# Hayden Best Skills
 
-## 步骤 1：在 GitHub 创建仓库
+> 公共 Claude Skills 仓库，供多个项目共享复用。
 
-1. 访问 https://github.com/new
-2. 仓库名：`hayden-best-skills`
-3. 设为 Public 或 Private（根据你的偏好）
-4. **不要**勾选 "Add a README file"（我们已经创建好了）
-5. 点击 "Create repository"
+## 概述
 
-## 步骤 2：推送本地仓库到 GitHub
+这是一个集中管理和共享 AI 技能（Skills）的仓库，通过 Git Submodule 的方式集成到各个项目中。技能定义了 AI 助手在特定场景下的行为模式和工作流程。
 
-```bash
-cd /Users/hayden/hayden-best-skills
+## 使用方式
 
-# 初始化 Git
-git init
-
-# 添加文件
-git add .
-
-# 首次提交
-git commit -m "feat: add git-sync skill"
-
-# 添加远端（替换 YOUR_USERNAME 为你的 GitHub 用户名）
-git remote add origin git@github.com:hayden/hayden-best-skills.git
-
-# 推送
-git push -u origin main
-```
-
-## 步骤 3：在 writingsystem 中添加 Submodule
+### 作为 Git Submodule 添加到项目
 
 ```bash
-cd /Users/hayden/WeChatProjects/writingsystem
-
-# 添加 submodule
-git submodule add git@github.com:hayden/hayden-best-skills.git skills/@common
+# 在项目根目录执行
+git submodule add git@github.com:HaydWang/hayden-best-skills.git skills/@common
 
 # 提交
 git add .gitmodules skills/@common
@@ -43,19 +20,103 @@ git commit -m "feat: add common skills submodule"
 git push
 ```
 
-## 步骤 4：验证
+### 克隆包含 Submodule 的项目
 
 ```bash
-# 检查子模块目录
-ls -la skills/@common/skills/
-# 应该看到 git-sync.md
+# 方法 1：克隆时自动拉取子模块
+git clone --recurse-submodules git@github.com:HaydWang/your-project.git
+
+# 方法 2：如果已经克隆，单独拉取子模块
+cd your-project
+git submodule update --init --recursive
 ```
 
-## 当前状态
+### 更新子模块到最新版本
 
-本地文件已创建在 `/Users/hayden/hayden-best-skills/`
+```bash
+# 在项目中拉取子模块最新代码
+git submodule update --remote --merge
 
-- ✅ `skills/git-sync.md` — 同步技能
-- ✅ `README.md` — 使用说明
+# 或进入子模块目录直接 pull
+cd skills/@common
+git pull
+```
 
-**下一步**：请在 GitHub 创建仓库后告诉我，我将继续执行。
+## 技能列表
+
+| 技能文件 | 触发词 | 说明 |
+|---------|-------|-----|
+| `git-sync.md` | sync, 同步, 推送, 提交 | Git 多设备同步技能 |
+
+## 目录结构
+
+```
+hayden-best-skills/
+├── skills/
+│   └── git-sync.md
+└── README.md
+```
+
+## 在项目中加载
+
+智子启动时会扫描 `skills/@common/skills/` 中的所有 `.md` 文件并自动注册为可用技能。
+
+## 修改技能
+
+### 修改公共技能
+
+```bash
+# 1. 在子模块目录中修改
+cd skills/@common
+vim skills/git-sync.md
+
+# 2. 提交修改
+git add .
+git commit -m "fix: improve xxx skill"
+git push
+
+# 3. 在主项目中记录新版本
+cd ../..
+git add skills/@common
+git commit -m "chore: update @common to latest"
+git push
+```
+
+## 技能开发规范
+
+### 技能文件格式
+
+每个技能是一个 Markdown 文件，包含：
+
+```markdown
+---
+name: 技能名称
+description: 触发词说明
+---
+
+# 技能标题
+
+## 目的
+简要说明技能的作用
+
+## 触发词
+- "触发词1" / "触发词2"
+
+## 执行流程
+步骤说明...
+```
+
+## 其他项目集成
+
+要在其他项目中使用这些公共技能：
+
+```bash
+cd ~/path/to/another-project
+git submodule add git@github.com:HaydWang/hayden-best-skills.git skills/@common
+git add .gitmodules skills/@common
+git commit -m "feat: add common skills submodule"
+```
+
+## License
+
+MIT
