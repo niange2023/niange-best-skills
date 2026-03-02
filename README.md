@@ -1,4 +1,4 @@
-# Hayden Best Skills
+# Niage Best Skills
 
 > 公共 Claude Skills 仓库，供多个项目共享复用。
 
